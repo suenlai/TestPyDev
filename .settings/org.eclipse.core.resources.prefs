@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+encoding//com/ml/Clusters.py=utf-8
+encoding//com/ml/Optimization.py=utf-8
+encoding//com/ml/Recommendations.py=utf-8
+encoding//com/ml/SearchEngine.py=utf-8
+encoding//com/xb/Bayes.py=utf-8
+encoding//com/xb/classify/BayesClassifyServer.py=utf-8
+encoding//com/xb/classify/CompareComment.py=utf-8
+encoding//com/xb/classify/SplitComment.py=utf-8
+encoding//com/xb/log/Logger.py=utf-8
+encoding/<project>=US-ASCII
