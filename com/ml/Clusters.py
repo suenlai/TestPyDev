@@ -5,6 +5,7 @@ Created on 2014年10月15日
 
 @author: kevin
 '''
+import os
 from math import sqrt
 from PIL import Image, ImageDraw
 from test.test_iterlen import len
@@ -242,8 +243,10 @@ def kcluster(rows, distance=pearson, k=4):
     return bestmatches
     
 def main():
-    blognames, words, data = readfile('D:\\workspace\\TestPyDev\\com\\blogdata.txt')
-    # clust = hcluster(data)
+    os.chdir("../..")
+    filePath = os.getcwd() + '\\res\\blogdata.txt'
+    blognames, words, data = readfile(filePath)
+    clust = hcluster(data)
     # printclust(clust, labels=blognames)
     # drawdendrogram(clust, blognames, jpeg='xb.jpeg')
     
