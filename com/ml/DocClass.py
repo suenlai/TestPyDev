@@ -2,7 +2,7 @@
 '''
 Created on 2014年11月3日
 
-@author: Administrator
+@author: kevin
 '''
 import re
 import math
@@ -10,7 +10,7 @@ import Classifier
 
 def getWords(doc):
     splitter=re.compile('\\W*')
-    print doc
+    #print doc
     #根据非字母字符拆分
     words=[s.lower() for s in splitter.split(doc) 
           if len(s)>2 and len(s)<20]
@@ -26,7 +26,9 @@ def sampletrain(c):
     c.train('the quick brown fox jumps','good')
 
 def main():
-    c = Classifier.Classifier(getWords)
+    #c = Classifier.Classifier(getWords)
+    #c = Classifier.Naivebayes(getWords)
+    c = Classifier.FisherClassifier(getWords)
     #c.train('the quick brown fox jumps over the lazy dog','good')
     #c.train('the quick money in the online casino','bad')
     #print c.fcount('quick', 'good')
@@ -35,7 +37,18 @@ def main():
         
     sampletrain(c)
     #print c.fprob('quick', 'good')
-    print c.weightedprob('money', 'good',c.fprob)
+    #print c.weightedprob('money', 'good',c.fprob)
+    #print c.prob('quick rabbit', 'good')
+    #print c.prob('quick rabbit', 'bad')
+    
+    #print c.classify('quick rabbit', default='unknown')
+    #print c.classify('quick money', default='unknown')
+    
+    print c.classify('quick rabbit')
+    print c.classify('quick money')
+    c.setminimum('bad', 0.8)
+    print c.classify('quick money')
+    
 
 if __name__ == '__main__':
     main()
