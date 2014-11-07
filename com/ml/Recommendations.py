@@ -1,4 +1,11 @@
 # coding:utf-8
+'''
+Created on 2014年09月20日
+
+@author: kevin
+
+推荐功能
+'''
 
 # 电影评分字典
 critics = {'Lisa Rose': {'Lady in the Water': 2.5, 'Snakes on a Plane': 3.5,

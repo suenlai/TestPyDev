@@ -4,6 +4,8 @@
 Created on 2014年10月15日
 
 @author: kevin
+
+聚类
 '''
 import os
 from math import sqrt

@@ -3,6 +3,7 @@
 Created on 2014年11月3日
 
 @author: kevin
+贝叶斯和费舍尔分类器
 '''
 import math
 

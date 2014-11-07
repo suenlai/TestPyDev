@@ -1,9 +1,10 @@
 # coding:utf-8
-
 '''
 Created on 2014年10月20日
 
 @author: kevin
+
+搜索功能
 '''
 import re
 import urllib2
