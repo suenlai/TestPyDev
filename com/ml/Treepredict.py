@@ -5,6 +5,7 @@ Created on 2014年11月6日
 @author: Administrator
 '''
 from math import log
+from PIL import Image, ImageDraw
 
 TestData = [['slashdot', 'USA', 'yes', 18, 'None'],
         ['google', 'France', 'yes', 23, 'Premium'],
@@ -117,9 +118,109 @@ def buildTree(rows, entropyScore=entropy):
         falseBranch = buildTree(bestSets[1])
         return decisionnode(col=bestCriteria[0], value=bestCriteria[1], tb=trueBranch, fb=falseBranch)
     else:
-        return decisionnode(result=uniqueCounts(rows))
+        return decisionnode(results=uniqueCounts(rows))
         
+
+def printTree(tree, indent=''):
+    # 是否一个叶节点
+    if tree.results != None:
+        print str(tree.results)
+    else:
+        # 打印判断条件
+        print str(tree.col) + ':' + str(tree.value) + '? '
+        # 打印分支
+        print indent + 'T->',
+        printTree(tree.tb, indent + ' ')
+        print indent + 'F->',
+        printTree(tree.fb, indent + ' ')
+
+def getWidth(tree):
+    if tree.tb == None and tree.fb == None: 
+        return 1
+    return getWidth(tree.tb) + getWidth(tree.fb)
+
+def getDepth(tree):
+    if tree.tb == None and tree.fb == None: 
+        return 0
+    return max(getDepth(tree.tb), getDepth(tree.fb)) + 1
+
+def drawtree(tree, jpeg='tree.jpg'):
+    w = getWidth(tree) * 100
+    h = getDepth(tree) * 100 + 120
     
+    img = Image.new('RGB', (w, h), (255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    
+    drawnode(draw, tree, w / 2, 20)
+    img.save(jpeg, 'JPEG')
+  
+def drawnode(draw, tree, x, y):
+    if tree.results == None:
+        # 得到每个分支的宽度
+        w1 = getWidth(tree.fb) * 100
+        w2 = getWidth(tree.tb) * 100
+
+        # 确定此节点所要占据的总空间
+        left = x - (w1 + w2) / 2
+        right = x + (w1 + w2) / 2
+    
+        # 绘制判断条件字符串
+        draw.text((x - 20, y - 10), str(tree.col) + ':' + str(tree.value), (0, 0, 0))
+    
+        # 绘制到分支的连线
+        draw.line((x, y, left + w1 / 2, y + 100), fill=(255, 0, 0))
+        draw.line((x, y, right - w2 / 2, y + 100), fill=(255, 0, 0))
+        
+        # 绘制分支节点
+        drawnode(draw, tree.fb, left + w1 / 2, y + 100)
+        drawnode(draw, tree.tb, right - w2 / 2, y + 100)
+    else:
+        txt = ' \n'.join(['%s:%d' % v for v in tree.results.items()])
+        draw.text((x - 20, y), txt, (0, 0, 0))
+        
+
+def classify(observation, tree):
+    if tree.results != None:
+        return tree.results
+    else:
+        v = observation[tree.col]
+        branch = None
+        if isinstance(v, int) or isinstance(v, float):
+            if v >= tree.value:
+                branch = tree.tb
+            else:
+                branch = tree.fb
+        else:
+            if v == tree.value:
+                branch = tree.tb
+            else:
+                branch = tree.fb
+        return classify(observation, branch)
+
+def prune(tree, mingain):
+    # If the branches aren't leaves, then prune them
+    if tree.tb.results == None:
+        prune(tree.tb, mingain)
+    if tree.fb.results == None:
+        prune(tree.fb, mingain)
+    
+      # If both the subbranches are now leaves, see if they
+      # should merged
+    if tree.tb.results != None and tree.fb.results != None:
+        # Build a combined dataset
+        tb, fb = [], []
+        for v, c in tree.tb.results.items():
+            tb += [[v]] * c
+        for v, c in tree.fb.results.items():
+            fb += [[v]] * c
+    
+        # Test the reduction in entropy
+        delta = entropy(tb + fb) - (entropy(tb) + entropy(fb) / 2)
+
+        if delta < mingain:
+            # Merge the branches
+            tree.tb, tree.fb = None, None
+            tree.results = uniqueCounts(tb + fb)
 
 def main():
     # uniqueCounts(TestData)
@@ -128,7 +229,12 @@ def main():
     # print giniimpurity(set1)
     # print entropy(set1)
     
-    buildTree(TestData, entropy)
+    tree = buildTree(TestData, entropy)
+    printTree(tree)
+    # drawtree(tree, jpeg='treeview.jpg')
+    print classify(['(direct)', 'USA', 'yes', 5], tree)
+    prune(tree, 1.0)
+    printTree(tree)
 
 if __name__ == '__main__':
     main()
