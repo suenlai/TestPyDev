@@ -57,7 +57,7 @@ def getDistances(data, vec1):
     distancelist.sort()
     return distancelist
 
-#K-最近邻算法
+# K-最近邻算法
 def knnEstimate(data, vec1, k=5):
     # 得到经过排序的距离值
     list = getDistances(data, vec1)
@@ -86,7 +86,7 @@ def subtractweight(dist, const=1.0):
 def gaussian(dist, sigma=5.0):
     return math.e ** (-dist ** 2 / (2 * sigma ** 2))
   
-#加权KNN 
+# 加权KNN 
 def knnWeighted(data, vec1, k=5, weightf=gaussian):
     # 得到距离值
     dlist = getDistances(data, vec1)
@@ -103,13 +103,109 @@ def knnWeighted(data, vec1, k=5, weightf=gaussian):
     if totalweight == 0: return 0
     avg = avg / totalweight
     return avg 
+
+def divideData(data, test=0.05):
+    trainset = []
+    testset = []
+    for row in data:
+        if random() < test:
+            testset.append(row)
+        else:
+            trainset.append(row)
+    return trainset, testset
+
+def testAlgorithm(algf, trainset, testset):
+    error = 0.0
+    for row in testset:
+        guess = algf(trainset, row['input'])
+        error += (row['result'] - guess) ** 2
+    return error / len(testset)
+
+def crossValidate(algf, data, trials=100, test=0.1):
+    error = 0.0
+    for i in range(trials):
+        trainset, testset = divideData(data, test)
+        error += testAlgorithm(algf, trainset, testset)
+    return error / trials
     
+def knn3(d, v):
+    knnEstimate(d, v, k=3)
+    
+def knn1(d, v):
+    knnEstimate(d, v, k=1)
+
+def wineset2():
+    rows = []
+    for i in range(300):
+        rating = random() * 50 + 50
+        age = random() * 50
+        aisle = float(randint(1, 20))
+        bottlesize = [375.0, 750.0, 1500.0][randint(0, 2)]
+        price = winePrice(rating, age)
+        price *= (bottlesize / 750)
+        price *= (random() * 0.2 + 0.9)
+        rows.append({'input':(rating, age, aisle, bottlesize),
+                     'result':price})
+    return rows
+
+# 按比例缩放
+def rescale(data, scale):
+    scaleddata = []
+    for row in data:
+        scaled = [scale[i] * row['input'][i] for i in range(len(scale))]
+        scaleddata.append({'input':scaled, 'result':row['result']})
+    return scaleddata
+
+def createcostfunction(algf, data):
+    def costf(scale):
+        sdata = rescale(data, scale)
+        return crossValidate(algf, sdata, trials=20)
+    return costf
+
+def wineset3():
+    rows = wineset1()
+    for row in rows:
+        if random() < 0.5:
+            # 从折扣店买的葡萄酒
+            row['result'] *= 0.6
+    return rows
+
+#概率密度
+def probguess(data,vec1,low,high,k=5,weightf=gaussian):
+    dlist=getDistances(data,vec1)
+    nweight=0.0
+    tweight=0.0
+  
+    for i in range(k):
+        dist=dlist[i][0]
+        idx=dlist[i][1]
+        weight=weightf(dist)
+        v=data[idx]['result']
+    
+        # 判断当前数据是否位于指定范围
+        if v>=low and v<=high:
+            nweight+=weight
+        tweight+=weight
+        
+    if tweight==0: 
+        return 0
+  
+    # 概率等于位于指定范围内的权重值除以所有权重值
+    return nweight/tweight
+
+
 def main():
     print winePrice(99.0, 1.0)
     data = wineset1()
     print data[1]['input']
     print knnEstimate(data, (95.0, 3.0))
     print knnWeighted(data, (99.0, 5.0))
+    
+    data = wineset2()
+    print data
+    print rescale(data, [10, 10, 0, 0.5])
+    weightdomain = [(0, 10)] * 4
+    print weightdomain
 
 if __name__ == '__main__':
     main()
