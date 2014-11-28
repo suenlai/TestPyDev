@@ -3,6 +3,7 @@
 Created on 2014年11月18日
 
 @author: kevin
+k最近邻算法
 '''
 from random import random, randint
 import math
