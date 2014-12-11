@@ -4,6 +4,7 @@ encoding//com/ml/Classifier.py=utf-8
 encoding//com/ml/Clusters.py=utf-8
 encoding//com/ml/DocClass.py=utf-8
 encoding//com/ml/Dorm.py=utf-8
+encoding//com/ml/LinearRegression.py=utf-8
 encoding//com/ml/Newsfeatures.py=utf-8
 encoding//com/ml/Numpredict.py=utf-8
 encoding//com/ml/Optimization.py=utf-8
