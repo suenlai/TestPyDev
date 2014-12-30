@@ -12,6 +12,7 @@ encoding//com/ml/Recommendations.py=utf-8
 encoding//com/ml/SearchEngine.py=utf-8
 encoding//com/ml/TestSVM.py=utf-8
 encoding//com/ml/Treepredict.py=utf-8
+encoding//com/mla/DecisionTree.py=utf-8
 encoding//com/xb/Bayes.py=utf-8
 encoding//com/xb/classify/BayesClassifyServer.py=utf-8
 encoding//com/xb/classify/CompareComment.py=utf-8
