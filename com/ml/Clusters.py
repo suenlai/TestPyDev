@@ -203,7 +203,7 @@ def kcluster(rows, distance=pearson, k=4):
     # 随机创建k个中心点
     clusters = [[random.random() * (ranges[i][1] - ranges[i][0]) + ranges[i][0] 
                for i in range(len(rows[0]))] for j in range(k)]                                  
-    # print clusters
+    print clusters
     
     lastmatches = None
     for t in range(100):
@@ -233,7 +233,7 @@ def kcluster(rows, distance=pearson, k=4):
             # print len(rows[0])
             if(len(bestmatches[i]) > 0):
                 for rowid in bestmatches[i]:
-                    for m in range(len(rows[rowid])):
+                    for m in range(len(rows[rowid])): #把每列数据相加
                         avgs[m] += rows[rowid][m]
                 
                 for j in range(len(avgs)):
