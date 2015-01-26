@@ -100,6 +100,23 @@ def findPrefixPath(basePat, treeNode):
     
     return condPats
 
+def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
+    bigL = [v[0] for v in sorted(headerTable.items(), key=lambda p: p[1])]#对headerTable排序，从小到大
+    for basePat in bigL:  
+        newFreqSet = preFix.copy()
+        newFreqSet.add(basePat)
+        #将每一个频繁项添加到频繁项集列表
+        freqItemList.append(newFreqSet)
+        condPattBases = findPrefixPath(basePat, headerTable[basePat][1])
+        #创建树
+        myCondTree, myHead = createTree(condPattBases, minSup)
+        
+        if myHead != None: #3. mine cond. FP-tree
+            #print 'conditional tree for: ',newFreqSet
+            #myCondTree.disp(1)            
+            mineTree(myCondTree, myHead, minSup, newFreqSet, freqItemList)
+            
+
 def main():
     '''
     rootNode = treeNode('pyramid', 9, None)
@@ -109,9 +126,14 @@ def main():
     initDataSet = loadSimpData()
     dataSet = createInitSet(initDataSet)
     myFpTree, myHeaderTable = createTree(dataSet, 3)
-    print myFpTree.disp()
     
-    print findPrefixPath('r', myHeaderTable['r'][1])
+    '''
+    print myFpTree.disp()
+    print findPrefixPath('t', myHeaderTable['t'][1])
+    '''
+    freqItems = []
+    mineTree(myFpTree, myHeaderTable, 3, set([]), freqItems)
+    print freqItems
     
     
 if __name__ == '__main__':
